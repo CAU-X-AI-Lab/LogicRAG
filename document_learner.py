@@ -41,7 +41,7 @@ DEFAULT_EMBEDDING_BASE_URL = (
     or "https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 DEFAULT_EMBEDDING_BATCH_SIZE = int(os.environ.get("LOGICRAG_EMBEDDING_BATCH_SIZE", "10"))
-DEFAULT_THETA = 0.85
+DEFAULT_THETA = 0.5
 LOCAL_EMBEDDING_DIM = 384
 
 
@@ -463,30 +463,7 @@ class StateMatch:
     a_index: int
     b_index: int
     similarity: float
-    reason: str = "embedding"
-    priority: int = 0
-
-
-ENTITY_ALIASES = {
-    "copper": ["铜", "copper", "cu", "伦铜", "沪铜"],
-    "aluminum": ["铝", "aluminum", "aluminium", "al", "伦铝", "沪铝"],
-    "gold": ["黄金", "金价", "贵金属", "gold", "comex", "shfe gold", "沪金", "纽约金"],
-    "cotton": ["棉", "棉花", "cotton", "ice cotton", "郑棉", "美棉"],
-}
-
-ROLE_ALIASES = {
-    "market_review": ["行情回顾", "市场回顾", "market review", "performance review"],
-    "tracking": ["行业跟踪", "品种跟踪", "走势", "价格", "供需", "tracking", "price", "supply", "demand"],
-    "risk": ["风险", "risk"],
-    "strategy": ["策略", "建议", "展望", "strategy", "outlook"],
-}
-
-
-def normalize_for_match(text: str) -> str:
-    text = str(text or "").lower()
-    text = re.sub(r"[\s,.;:，。；：、/\\()（）\\[\\]{}<>《》\"'“”‘’_-]+", "", text)
-    return text
-
+    
 
 def state_match_text(state: Dict[str, Any]) -> str:
     parts = [
@@ -508,7 +485,7 @@ def extract_alias_tags(text: str, alias_map: Dict[str, Sequence[str]]) -> set:
     return tags
 
 
-def lexical_match_reason(state_a: Dict[str, Any], state_b: Dict[str, Any]) -> Tuple[Optional[str], int]:
+
     """Return a non-embedding match reason when two states are clearly equivalent."""
     label_a = normalize_for_match(state_a.get("template_description", ""))
     label_b = normalize_for_match(state_b.get("template_description", ""))
@@ -552,24 +529,15 @@ def match_common_states(
     embeddings_b: Sequence[Sequence[float]],
     theta: float,
 ) -> List[StateMatch]:
-    """Greedily match states that appear in both reports.
 
-    We use embedding similarity as the main signal, but add lexical/structural
-    safeguards so semantically obvious shared states, such as identical labels
-    for copper/aluminum/gold tracking sections, are not over-pruned merely
-    because their detailed descriptions differ across reports.
-    """
     candidates: List[StateMatch] = []
     for i, vec_a in enumerate(embeddings_a):
         for j, vec_b in enumerate(embeddings_b):
             sim = cosine_similarity(vec_a, vec_b)
             reason, priority = lexical_match_reason(states_a[i], states_b[j])
             if sim >= theta:
-                candidates.append(StateMatch(i, j, sim, reason or "embedding", max(priority, 50)))
-            elif reason is not None:
-                candidates.append(StateMatch(i, j, sim, reason, priority))
-
-    candidates.sort(key=lambda m: (m.priority, m.similarity), reverse=True)
+                candidates.append(StateMatch(i, j, sim))
+    candidates.sort(key=lambda m: m.similarity, reverse=True)
     used_a = set()
     used_b = set()
     matches: List[StateMatch] = []
@@ -665,7 +633,6 @@ def build_global_template(
                 {"document_id": seq_b["document_id"], "source_node_id": b.get("node_id")},
             ],
             "match_similarity": round(match.similarity, 6),
-            "match_reason": match.reason,
         }
         nodes.append(node)
 
@@ -722,11 +689,6 @@ def build_global_template(
             },
             "global_state_count": len(nodes),
             "matching_rule": "A state is retained if it is semantically matched in both input reports with cosine similarity >= theta.",
-            "matching_relaxation": (
-                "In addition to embedding similarity, exact labels and clear "
-                "entity-role matches are retained to avoid over-pruning shared "
-                "domain states with different detailed descriptions."
-            ),
         },
     }
 
@@ -790,7 +752,6 @@ def build_embedding_index(
                     "required_materials": node.get("required_materials", []),
                     "support": node.get("support", []),
                     "match_similarity": node.get("match_similarity"),
-                    "match_reason": node.get("match_reason"),
                 },
             }
         )

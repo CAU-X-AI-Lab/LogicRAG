@@ -29,7 +29,7 @@ from document_learner import (
 
 
 DEFAULT_QUERY = "write a nonferrous metals research report for  March 2, 2025 "
-DEFAULT_TAU = 0.7
+DEFAULT_TAU = 0.5
 
 
 def load_json(path: str | Path) -> Dict[str, Any]:
