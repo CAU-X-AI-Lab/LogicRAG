@@ -463,63 +463,6 @@ class StateMatch:
     a_index: int
     b_index: int
     similarity: float
-    
-
-def state_match_text(state: Dict[str, Any]) -> str:
-    parts = [
-        state.get("template_description", ""),
-        state.get("content_guideline", ""),
-        " ".join(str(x) for x in as_list(state.get("required_materials"))),
-    ]
-    return "\n".join(str(part) for part in parts if part)
-
-
-def extract_alias_tags(text: str, alias_map: Dict[str, Sequence[str]]) -> set:
-    norm = normalize_for_match(text)
-    tags = set()
-    for tag, aliases in alias_map.items():
-        for alias in aliases:
-            if normalize_for_match(alias) in norm:
-                tags.add(tag)
-                break
-    return tags
-
-
-
-    """Return a non-embedding match reason when two states are clearly equivalent."""
-    label_a = normalize_for_match(state_a.get("template_description", ""))
-    label_b = normalize_for_match(state_b.get("template_description", ""))
-    node_type_a = str(state_a.get("node_type", ""))
-    node_type_b = str(state_b.get("node_type", ""))
-    node_id_a = str(state_a.get("node_id", ""))
-    node_id_b = str(state_b.get("node_id", ""))
-
-    if label_a and label_a == label_b:
-        return "exact_label", 100
-
-    if label_a and label_b and len(label_a) >= 4 and len(label_b) >= 4:
-        if label_a in label_b or label_b in label_a:
-            return "label_contains", 90
-
-    text_a = state_match_text(state_a)
-    text_b = state_match_text(state_b)
-    entities_a = extract_alias_tags(text_a, ENTITY_ALIASES)
-    entities_b = extract_alias_tags(text_b, ENTITY_ALIASES)
-    roles_a = extract_alias_tags(text_a, ROLE_ALIASES)
-    roles_b = extract_alias_tags(text_b, ROLE_ALIASES)
-    shared_entities = entities_a & entities_b
-    shared_roles = roles_a & roles_b
-
-    if shared_entities and shared_roles and node_type_a == node_type_b:
-        return "shared_entity_and_role", 80
-
-    if node_id_a == node_id_b and shared_entities:
-        return "same_position_and_entity", 75
-
-    if node_id_a == node_id_b and shared_roles and node_type_a == node_type_b:
-        return "same_position_and_role", 60
-
-    return None, 0
 
 
 def match_common_states(
@@ -534,7 +477,6 @@ def match_common_states(
     for i, vec_a in enumerate(embeddings_a):
         for j, vec_b in enumerate(embeddings_b):
             sim = cosine_similarity(vec_a, vec_b)
-            reason, priority = lexical_match_reason(states_a[i], states_b[j])
             if sim >= theta:
                 candidates.append(StateMatch(i, j, sim))
     candidates.sort(key=lambda m: m.similarity, reverse=True)

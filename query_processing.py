@@ -28,7 +28,7 @@ from document_learner import (
 )
 
 
-DEFAULT_QUERY = "write a nonferrous metals research report for  March 2, 2025 "
+DEFAULT_QUERY = "write a nonferrous metals research report for  February 28, 2025 "
 DEFAULT_TAU = 0.5
 
 

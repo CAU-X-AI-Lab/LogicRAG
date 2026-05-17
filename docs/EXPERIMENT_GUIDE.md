@@ -59,7 +59,7 @@ Requirements:
 Example dataset path used during development:
 
 ```text
-C:\Users\Steve\Desktop\Research\LogicRAG\dataset\东吴证券\test\case_2253.csv
+C:\Users\Jacob\Desktop\Research\LogicRAG\dataset\Nonferrous\data\case_2253.csv
 ```
 
 ## 3. One-Command Client
@@ -68,16 +68,15 @@ The easiest way to run the full pipeline is:
 
 ```powershell
 python logicrag_client.py `
-  --csv "dataset\东吴证券\test\case_2253.csv" `
+  --csv "dataset\Nonferrous\data\case_2253.csv" `
   --row-a 0 `
   --row-b 1 `
-  --query "write a nonferrous metals research report for March 2, 2025" `
+  --query "write a nonferrous metals research report for February 28, 2025" `
   --theta 0.5 `
   --tau 0.5 `
   --date "2025-02-28"
 ```
 
-Why override the date here? The query date `2025-03-02` is a Sunday, so market quotation data may be empty. For debugging, `2025-02-28` is a safer trading-day reference.
 
 ## 4. Hyperparameters
 
@@ -125,7 +124,7 @@ dimension=1024
 
 ```powershell
 python document_learner.py `
-  --csv "dataset\东吴证券\test\case_2253.csv" `
+  --csv "dataset\Nonferrous\test\case_2253.csv" `
   --row-a 0 `
   --row-b 1 `
   --theta 0.5 `

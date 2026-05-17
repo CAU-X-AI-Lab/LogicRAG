@@ -76,8 +76,7 @@ def is_executable_state(node: Dict[str, Any], generate_internal: bool = False) -
     if generate_internal:
         return True
     children = node.get("children") or []
-    required = node.get("required_materials") or []
-    return (not children) or bool(required)
+    return not children
 
 
 def format_materials_text(materials_payload: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
@@ -233,6 +232,9 @@ Current state:
 Local context from the immediately previous state:
 {prev_summary or "None."}
 
+Use the previous-state summary only to maintain local coherence and smooth transitions.
+Do not restate, summarize, or copy the previous state's content in the current output.
+
 Retrieved data bound to the current state:
 {materials_text}
 
@@ -242,6 +244,7 @@ Writing requirements:
 3. Do not invent missing data. If key data is missing, state the absence briefly and conservatively.
 4. Focus only on the current state; do not generate content for other states.
 5. Output plain report text only. Do not output node_id, titles, bullet lists, Markdown, or explanations.
+6. Do not repeat content that has already appeared in the previous state.
 """.strip()
 
     def _generate_state_content(self, node: Dict[str, Any], materials_text: str) -> str:

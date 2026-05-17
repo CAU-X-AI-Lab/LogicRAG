@@ -29,7 +29,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 import pandas as pd
 
 
-DEFAULT_QUERY = "write a nonferrous metals research report for  March 2, 2025 "
+DEFAULT_QUERY = "write a nonferrous metals research report for February 28, 2025 "
 DEFAULT_TEMPLATE = "logicrag_outputs/query_subtree.json"
 DEFAULT_OUTPUT_DIR = "logicrag_outputs/retrieved_materials"
 DEFAULT_DICTIONARY = "domain_dictionary.csv"
