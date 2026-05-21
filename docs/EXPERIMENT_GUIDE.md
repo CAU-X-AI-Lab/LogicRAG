@@ -59,7 +59,7 @@ Requirements:
 Example dataset path used during development:
 
 ```text
-C:\Users\Jacob\Desktop\Research\LogicRAG\dataset\Nonferrous\data\case_2253.csv
+C:\Users\Jacob\Desktop\Research\LogicRAG\dataset\Precious_Metals\data\case_2253.csv
 ```
 
 ## 3. One-Command Client
@@ -68,10 +68,10 @@ The easiest way to run the full pipeline is:
 
 ```powershell
 python logicrag_client.py `
-  --csv "dataset\Nonferrous\data\case_2253.csv" `
+  --csv "dataset\Precious_Metals\data\case_2253.csv" `
   --row-a 0 `
   --row-b 1 `
-  --query "write a nonferrous metals research report for February 28, 2025" `
+  --query "write a precious metals research report for February 28, 2025" `
   --theta 0.5 `
   --tau 0.5 `
   --date "2025-02-28"
@@ -86,7 +86,7 @@ Main hyperparameters:
 |---|---:|---|
 | `--theta` | `0.5` | Threshold for matching states across the two sample reports in `document_learner.py`. |
 | `--tau` | `0.5` | Threshold for matching query embedding to state embeddings in `query_processing.py`. |
-| `--query` | `write a nonferrous metals research report for  March 2, 2025 ` | User query for the generation task. |
+| `--query` | `write a precious metals research report for  March 2, 2025 ` | User query for the generation task. |
 | `--row-a` | `0` | First sample report row index. |
 | `--row-b` | `1` | Second sample report row index. |
 | `--output-root` | `logicrag_outputs` | Output directory for all intermediate and final artifacts. |
@@ -124,7 +124,7 @@ dimension=1024
 
 ```powershell
 python document_learner.py `
-  --csv "dataset\Nonferrous\test\case_2253.csv" `
+  --csv "dataset\Precious_Metals\test\case_2253.csv" `
   --row-a 0 `
   --row-b 1 `
   --theta 0.5 `
@@ -145,7 +145,7 @@ logicrag_outputs/run_manifest.json
 
 ```powershell
 python query_processing.py `
-  --query "write a nonferrous metals research report for March 2, 2025" `
+  --query "write a precious metals research report for March 2, 2025" `
   --tau 0.5 `
   --template "logicrag_outputs/global_template.json" `
   --index "logicrag_outputs/state_index.json" `
@@ -170,7 +170,7 @@ Actual retrieval:
 
 ```powershell
 python ifind_data_plugin.py `
-  --query "write a nonferrous metals research report for March 2, 2025" `
+  --query "write a precious metals research report for March 2, 2025" `
   --date "2025-02-28" `
   --query-subtree "logicrag_outputs/query_subtree.json" `
   --dictionary "domain_dictionary.csv" `
