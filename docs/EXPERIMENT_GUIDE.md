@@ -4,7 +4,7 @@ This guide explains how to configure the runtime environment and run the full Lo
 
 ## 1. Environment Variables
 
-You can provide API keys and account credentials either as environment variables or as CLI hyperparameters. For DeepSeek API, you can apply for an API key at https://platform.deepseek.com/. For `DASHSCOPE_API_KEY`, you can create or view an API key in the Alibaba Cloud Bailian console at https://bailian.console.aliyun.com/. For `IFIND_USERNAME` and `IFIND_PASSWORD`, you can apply for a free trial account at https://quantapi.10jqka.com.cn/.
+You can provide API keys and account credentials either as environment variables or as CLI hyperparameters. For `DeepSeek API`, you can apply for an API key at https://platform.deepseek.com/. For `DASHSCOPE_API_KEY`, you can create or view an API key in the Alibaba Cloud Bailian console at https://bailian.console.aliyun.com/. For `IFIND_USERNAME` and `IFIND_PASSWORD`, you can apply for a free trial account at https://quantapi.10jqka.com.cn/.
 
 ### PowerShell Temporary Configuration
 
